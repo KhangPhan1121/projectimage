@@ -5,29 +5,23 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        Console.WriteLine("Nhap: ");
-        string input = Console.ReadLine();
-
-        if(string.IsNullOrEmpty(input))
-        {
-            Console.WriteLine("Nhap sai");
-            return;
-        }
-
-        string[] words = input.Split(",");
-
+        InputFileReader inputFileReader = new InputFileReader();
         ImageInput imageInput = new ImageInput();
         ImageDownloader imageDownloader = new ImageDownloader();
         ImageSave imageSave = new ImageSave();
 
-        foreach(string word in words)
+        string[] words = inputFileReader.Read("input.txt");
+        foreach (string input in words)
         {
-            string ConvertedText = imageInput.Convert(word.Trim());
-            byte[] imageData = imageDownloader.DownloadImage(ConvertedText);
-
-            if(imageData != null)
+            try
             {
-                imageSave.SaveImageToFile(imageData, $"{word.Trim()}");
+                string ConvertedText = imageInput.Convert(input);
+                byte[] imageData = imageDownloader.DownloadImage(ConvertedText);
+                imageSave.SaveImageToFile(imageData, $"{input}.PNG");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Loi xu ly: {ex.Message}");
             }
         }
     }
