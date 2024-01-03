@@ -5,18 +5,30 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        for (int i = 0; ; i++)
+        Console.WriteLine("Nhap: ");
+        string input = Console.ReadLine();
+
+        if(string.IsNullOrEmpty(input))
         {
-            string a = Console.ReadLine();
+            Console.WriteLine("Nhap sai");
+            return;
+        }
 
-            ImageInput imageInput = new ImageInput();
-            string b = imageInput.Convert(a);
+        string[] words = input.Split(",");
 
-            ImageDownloader imageDownloader = new ImageDownloader();
-            var c = imageDownloader.DownloadImage(b);
+        ImageInput imageInput = new ImageInput();
+        ImageDownloader imageDownloader = new ImageDownloader();
+        ImageSave imageSave = new ImageSave();
 
-            ImageSave imageSave = new ImageSave();
-            imageSave.SaveImageToFile(c, a + ".PNG");
+        foreach(string word in words)
+        {
+            string ConvertedText = imageInput.Convert(word.Trim());
+            byte[] imageData = imageDownloader.DownloadImage(ConvertedText);
+
+            if(imageData != null)
+            {
+                imageSave.SaveImageToFile(imageData, $"{word.Trim()}");
+            }
         }
     }
 }
